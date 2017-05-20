@@ -4,7 +4,9 @@ package org.wheatgenetics.javalibraryuser;
  * Uses:
  * android.os.Bundle
  * android.support.v7.app.AppCompatActivity
+ * android.widget.TextView
  *
+ * org.wheatgenetics.javalib.Utils
  * org.wheatgenetics.javalibraryuser.R
  */
 
@@ -15,5 +17,12 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         this.setContentView(org.wheatgenetics.javalibraryuser.R.layout.activity_main);
+
+        final int                     number   = 2;
+        final android.widget.TextView textView = (android.widget.TextView)
+            this.findViewById(org.wheatgenetics.javalibraryuser.R.id.textView);
+        assert textView != null;
+        textView.setText(java.lang.String.format("doubleOf(%d) is %d",
+            number, org.wheatgenetics.javalib.Utils.doubleOf(number)));
     }
 }
