@@ -18,11 +18,11 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
         super.onCreate(savedInstanceState);
         this.setContentView(org.wheatgenetics.javalibraryuser.R.layout.activity_main);
 
-        final int                     number   = 2;
-        final android.widget.TextView textView = (android.widget.TextView)
+        final java.lang.String        unadjusted = "  2 leading spaces";
+        final android.widget.TextView textView   = (android.widget.TextView)
             this.findViewById(org.wheatgenetics.javalibraryuser.R.id.textView);
         assert null != textView;
-        textView.setText(java.lang.String.format("doubleOf(%d) is %d",
-            number, org.wheatgenetics.javalib.Utils.doubleOf(number)));
+        textView.setText(java.lang.String.format("adjust(\"%s\") is \"%s\"",
+            unadjusted, org.wheatgenetics.javalib.Utils.adjust(unadjusted)));
     }
 }
