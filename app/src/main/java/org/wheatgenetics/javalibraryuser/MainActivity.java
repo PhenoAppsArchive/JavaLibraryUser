@@ -12,8 +12,7 @@ package org.wheatgenetics.javalibraryuser;
  */
 public class MainActivity extends android.support.v7.app.AppCompatActivity
 {
-    @java.lang.Override
-    protected void onCreate(final android.os.Bundle savedInstanceState)
+    @java.lang.Override protected void onCreate(final android.os.Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         this.setContentView(org.wheatgenetics.javalibraryuser.R.layout.activity_main);
