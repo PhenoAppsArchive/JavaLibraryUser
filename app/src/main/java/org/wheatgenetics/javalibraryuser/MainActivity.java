@@ -98,18 +98,37 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
 
     public void onButtonClick(final android.view.View view)
     {
-        switch (this.buttonClickCount)
         {
-            case 0: this.setMultiLineTextViewText(this.internalDir.list()       ); break;
-            case 1: this.setMultiLineTextViewText(this.externalPrivateDir.list()); break;
-            case 2: this.setMultiLineTextViewText(this.externalPublicDir.list() ); break;
+            final java.lang.String regex = ".+\\.xml";
+            switch (this.buttonClickCount)
+            {
+                case 0: this.setMultiLineTextViewText(this.internalDir.list(     )); break;
+                case 1: this.setMultiLineTextViewText(this.internalDir.list(regex)); break;
+
+                case 2: this.setMultiLineTextViewText(this.externalPrivateDir.list(     )); break;
+                case 3: this.setMultiLineTextViewText(this.externalPrivateDir.list(regex)); break;
+
+                case 4: this.setMultiLineTextViewText(this.externalPublicDir.list(     )); break;
+                case 5: this.setMultiLineTextViewText(this.externalPublicDir.list(regex)); break;
+            }
         }
 
         switch (this.buttonClickCount)
         {
-            case 0: this.buttonClickCount++; this.setButtonText("externalPrivateDir.list()"); break;
-            case 1: this.buttonClickCount++; this.setButtonText("externalPublicDir.list()" ); break;
-            default: this.buttonClickCount = 0; this.setButtonText("internalDir.list()"    ); break;
+            case 0: case 1: case 2: case 3: case 4: this.buttonClickCount++  ; break;
+            default:                                this.buttonClickCount = 0; break;
+        }
+
+        switch (this.buttonClickCount)
+        {
+            case 0: this.setButtonText("internalDir.list()"     ); break;
+            case 1: this.setButtonText("internalDir.list(regex)"); break;
+
+            case 2: this.setButtonText("externalPrivateDir.list()"     ); break;
+            case 3: this.setButtonText("externalPrivateDir.list(regex)"); break;
+
+            case 4: this.setButtonText("externalPublicDir.list()"     ); break;
+            case 5: this.setButtonText("externalPublicDir.list(regex)"); break;
         }
     }
 }
