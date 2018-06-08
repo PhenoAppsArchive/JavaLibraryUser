@@ -4,6 +4,7 @@ package org.wheatgenetics.javalibraryuser;
  * Uses:
  * android.app.Activity
  * android.os.Bundle
+ * android.os.Environment
  * android.support.annotation.IdRes
  * android.support.v7.app.AppCompatActivity
  * android.view.View
@@ -22,7 +23,7 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
         private Dir(final java.io.File path, final android.app.Activity activity,
         @android.support.annotation.IdRes final int id)
         {
-            super(path, ".javalibraryuser");
+            super(path, /* blankHiddenFileName => */ ".javalibraryuser");
 
             assert null != activity;
             final android.widget.TextView textView = activity.findViewById(id);
@@ -40,9 +41,6 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
     // endregion
 
     // region Private Methods
-    private void setButtonText(final java.lang.String text)
-    { assert null != this.button; this.button.setText(text); }
-
     private void setMultiLineTextViewText(final java.lang.String fileNames[])
     {
         final java.lang.String text;
@@ -53,8 +51,11 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
                 text = null;
             else
             {
-                final java.lang.StringBuilder stringBuilder =
-                    new java.lang.StringBuilder(fileNames[0]);
+                final java.lang.StringBuilder stringBuilder;
+                {
+                    final int first = 0;
+                    stringBuilder = new java.lang.StringBuilder(fileNames[first]);
+                }
                 {
                     final int second = 1, last = fileNames.length - 1;
                     for (int i = second; i <= last; i++)
@@ -65,6 +66,15 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
 
         assert null != this.multiLineTextView; this.multiLineTextView.setText(text);
     }
+
+    private void listAll(final org.wheatgenetics.javalib.Dir dir)
+    { if (null != dir) this.setMultiLineTextViewText(dir.list()); }
+
+    private void listXml(final org.wheatgenetics.javalib.Dir dir)
+    { if (null != dir) this.setMultiLineTextViewText(dir.list(".+\\.xml")); }
+
+    private void setButtonText(final java.lang.String text)
+    { assert null != this.button; this.button.setText(text); }
     // endregion
 
     @java.lang.Override protected void onCreate(final android.os.Bundle savedInstanceState)
@@ -73,12 +83,15 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
         this.setContentView(org.wheatgenetics.javalibraryuser.R.layout.activity_main);
 
         {
-            final java.lang.String unadjusted = "  2 leading spaces";
-            final android.widget.TextView adjustTextView =
-                this.findViewById(org.wheatgenetics.javalibraryuser.R.id.adjustTextView);
-            assert null != adjustTextView;
-            adjustTextView.setText(java.lang.String.format("adjust(\"%s\") is \"%s\"",
-                unadjusted, org.wheatgenetics.javalib.Utils.adjust(unadjusted)));
+            final java.lang.String        text;
+            final android.widget.TextView adjustTextView = this.findViewById(
+                org.wheatgenetics.javalibraryuser.R.id.adjustTextView);
+            {
+                final java.lang.String unadjusted = "  2 leading spaces";
+                text = java.lang.String.format("adjust(\"%s\") is \"%s\"",
+                    unadjusted, org.wheatgenetics.javalib.Utils.adjust(unadjusted));
+            }
+            assert null != adjustTextView; adjustTextView.setText(text);
         }
 
         this.internalDir = new org.wheatgenetics.javalibraryuser.MainActivity.Dir(
@@ -99,17 +112,16 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
     public void onButtonClick(final android.view.View view)
     {
         {
-            final java.lang.String regex = ".+\\.xml";
             switch (this.buttonClickCount)
             {
-                case 0: this.setMultiLineTextViewText(this.internalDir.list(     )); break;
-                case 1: this.setMultiLineTextViewText(this.internalDir.list(regex)); break;
+                case 0: this.listAll(this.internalDir); break;
+                case 1: this.listXml(this.internalDir); break;
 
-                case 2: this.setMultiLineTextViewText(this.externalPrivateDir.list(     )); break;
-                case 3: this.setMultiLineTextViewText(this.externalPrivateDir.list(regex)); break;
+                case 2: this.listAll(this.externalPrivateDir); break;
+                case 3: this.listXml(this.externalPrivateDir); break;
 
-                case 4: this.setMultiLineTextViewText(this.externalPublicDir.list(     )); break;
-                case 5: this.setMultiLineTextViewText(this.externalPublicDir.list(regex)); break;
+                case 4: this.listAll(this.externalPublicDir); break;
+                case 5: this.listXml(this.externalPublicDir); break;
             }
         }
 
