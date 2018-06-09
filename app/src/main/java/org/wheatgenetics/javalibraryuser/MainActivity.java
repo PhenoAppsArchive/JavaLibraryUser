@@ -3,9 +3,11 @@ package org.wheatgenetics.javalibraryuser;
 /**
  * Uses:
  * android.app.Activity
+ * android.content.Intent
  * android.os.Bundle
  * android.os.Environment
  * android.support.annotation.IdRes
+ * android.support.annotation.IntRange
  * android.support.v7.app.AppCompatActivity
  * android.view.View
  * android.widget.Button
@@ -15,6 +17,7 @@ package org.wheatgenetics.javalibraryuser;
  * org.wheatgenetics.javalib.Utils
  *
  * org.wheatgenetics.javalibraryuser.R
+ *  * org.wheatgenetics.javalibraryuser.WebViewActivity
  */
 public class MainActivity extends android.support.v7.app.AppCompatActivity
 {
@@ -37,7 +40,10 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
 
     private android.widget.Button   button            = null;
     private android.widget.TextView multiLineTextView = null;
-    private int                     buttonClickCount  = 0   ;
+    @android.support.annotation.IntRange(from = 0, to = 6) private int buttonClickCount = 0;
+
+    private android.content.Intent intentInstance = null;
+    private java.net.URL           urlInstance    = null;
     // endregion
 
     // region Private Methods
@@ -75,6 +81,39 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
 
     private void listXml(final org.wheatgenetics.javalib.Dir dir)
     { if (null != dir) this.setMultiLineTextViewText(dir.list(".+\\.xml")); }
+
+    private android.content.Intent intent()
+    {
+        if (null == this.intentInstance) this.intentInstance = new android.content.Intent(
+            this, org.wheatgenetics.javalibraryuser.WebViewActivity.class);
+        return this.intentInstance;
+    }
+
+    private java.net.URL url() throws java.net.MalformedURLException
+    {
+        if (null == this.urlInstance) this.urlInstance = new java.net.URL(   // throws java.net.Mal-
+            /* protocol => */ "http"           ,                             //  formedURLException
+            /* host     => */ "www.example.org",
+            /* file     => */ "index.html"     );
+        return this.urlInstance;
+    }
+
+    private void get()
+    {
+        final android.content.Intent intent = this.intent();
+        try
+        {
+            intent.putExtra(android.content.Intent.EXTRA_TEXT,
+                org.wheatgenetics.javalib.Utils.get(        // throws java.io.IOException
+                    this.url()));                           // throws java.net.MalformedURLException
+            this.startActivity(intent);
+        }
+        catch (final java.lang.Exception e)
+        {
+            final java.lang.String message = e.getMessage();
+            this.setMultiLineTextViewText(null == message ? e.getClass().getName() : message);
+        }
+    }
 
     private void setButtonText(final java.lang.String text)
     { assert null != this.button; this.button.setText(text); }
@@ -125,13 +164,23 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
 
                 case 4: this.listAll(this.externalPublicDir); break;
                 case 5: this.listXml(this.externalPublicDir); break;
+
+                case 6:
+                    @java.lang.SuppressWarnings({"ClassExplicitlyExtendsObject"})
+                    class Runnable extends java.lang.Object implements java.lang.Runnable
+                    {
+                        @java.lang.Override public void run()
+                        { org.wheatgenetics.javalibraryuser.MainActivity.this.get(); }
+                    }
+                    final java.lang.Thread thread = new java.lang.Thread(new Runnable(), "get()");
+                    thread.start(); break;
             }
         }
 
         switch (this.buttonClickCount)
         {
-            case 0: case 1: case 2: case 3: case 4: this.buttonClickCount++  ; break;
-            default:                                this.buttonClickCount = 0; break;
+            case 0: case 1: case 2: case 3: case 4: case 5: this.buttonClickCount++  ; break;
+            default:                                        this.buttonClickCount = 0; break;
         }
 
         switch (this.buttonClickCount)
@@ -144,6 +193,8 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
 
             case 4: this.setButtonText("externalPublicDir.list()"     ); break;
             case 5: this.setButtonText("externalPublicDir.list(regex)"); break;
+
+            case 6: this.setButtonText("http://www.example.org/"); break;
         }
     }
 }
