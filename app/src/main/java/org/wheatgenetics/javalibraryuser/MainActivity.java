@@ -41,30 +41,33 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
     // endregion
 
     // region Private Methods
-    private void setMultiLineTextViewText(final java.lang.String fileNames[])
+    private void setMultiLineTextViewText(final java.lang.String text)
+    { assert null != this.multiLineTextView; this.multiLineTextView.setText(text); }
+
+    private void setMultiLineTextViewText(final java.lang.String lines[])
     {
         final java.lang.String text;
-        if (null == fileNames)
+        if (null == lines)
             text = null;
         else
-            if (fileNames.length < 1)
+            if (lines.length < 1)
                 text = null;
             else
             {
                 final java.lang.StringBuilder stringBuilder;
                 {
                     final int first = 0;
-                    stringBuilder = new java.lang.StringBuilder(fileNames[first]);
+                    stringBuilder = new java.lang.StringBuilder(lines[first]);
                 }
                 {
-                    final int second = 1, last = fileNames.length - 1;
+                    final int second = 1, last = lines.length - 1;
                     for (int i = second; i <= last; i++)
-                        stringBuilder.append('\n').append(fileNames[i]);
+                        stringBuilder.append('\n').append(lines[i]);
                 }
                 text = stringBuilder.toString();
             }
 
-        assert null != this.multiLineTextView; this.multiLineTextView.setText(text);
+        this.setMultiLineTextViewText(text);
     }
 
     private void listAll(final org.wheatgenetics.javalib.Dir dir)
