@@ -82,11 +82,17 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
     private void listXml(final org.wheatgenetics.javalib.Dir dir)
     { if (null != dir) this.setMultiLineTextViewText(dir.list(".+\\.xml")); }
 
-    private android.content.Intent intent(final java.lang.String content)
+    private android.content.Intent intent(
+    final java.lang.String content, final java.lang.String encoding)
     {
         if (null == this.intentInstance) this.intentInstance = new android.content.Intent(
             this, org.wheatgenetics.javalibraryuser.WebViewActivity.class);
-        this.intentInstance.putExtra(android.content.Intent.EXTRA_TEXT, content);
+
+        this.intentInstance.putExtra(
+            org.wheatgenetics.javalibraryuser.WebViewActivity.CONTENT, content);
+        this.intentInstance.putExtra(
+            org.wheatgenetics.javalibraryuser.WebViewActivity.ENCODING, encoding);
+
         return this.intentInstance;
     }
 
@@ -196,7 +202,9 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
                         this.setMultiLineTextViewText("response is null");
                     else
                         if ("text/html".equals(thread.response.contentType()))
-                            this.startActivity(this.intent(thread.response.content()));
+                            this.startActivity(this.intent(
+                                thread.response.content        (),
+                                thread.response.contentEncoding()));
                         else
                             this.setMultiLineTextViewText(thread.response.content());
                 break;
