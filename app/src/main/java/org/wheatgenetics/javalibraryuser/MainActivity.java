@@ -15,6 +15,7 @@ package org.wheatgenetics.javalibraryuser;
  *
  * org.wheatgenetics.javalib.Dir
  * org.wheatgenetics.javalib.Utils
+ * org.wheatgenetics.javalib.Utils.Response
  *
  * org.wheatgenetics.javalibraryuser.R
  *  * org.wheatgenetics.javalibraryuser.WebViewActivity
@@ -40,10 +41,9 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
 
     private android.widget.Button   button            = null;
     private android.widget.TextView multiLineTextView = null;
-    @android.support.annotation.IntRange(from = 0, to = 6) private int buttonClickCount = 0;
+    @android.support.annotation.IntRange(from = 0, to = 7) private int buttonClickCount = 0;
 
     private android.content.Intent intentInstance = null;
-    private java.net.URL           urlInstance    = null;
     // endregion
 
     // region Private Methods
@@ -82,37 +82,12 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
     private void listXml(final org.wheatgenetics.javalib.Dir dir)
     { if (null != dir) this.setMultiLineTextViewText(dir.list(".+\\.xml")); }
 
-    private android.content.Intent intent()
+    private android.content.Intent intent(final java.lang.String content)
     {
         if (null == this.intentInstance) this.intentInstance = new android.content.Intent(
             this, org.wheatgenetics.javalibraryuser.WebViewActivity.class);
+        this.intentInstance.putExtra(android.content.Intent.EXTRA_TEXT, content);
         return this.intentInstance;
-    }
-
-    private java.net.URL url() throws java.net.MalformedURLException
-    {
-        if (null == this.urlInstance) this.urlInstance = new java.net.URL(   // throws java.net.Mal-
-            /* protocol => */ "http"           ,                             //  formedURLException
-            /* host     => */ "www.example.org",
-            /* file     => */ "index.html"     );
-        return this.urlInstance;
-    }
-
-    private void get()
-    {
-        final android.content.Intent intent = this.intent();
-        try
-        {
-            intent.putExtra(android.content.Intent.EXTRA_TEXT,
-                org.wheatgenetics.javalib.Utils.get(        // throws java.io.IOException
-                    this.url()));                           // throws java.net.MalformedURLException
-            this.startActivity(intent);
-        }
-        catch (final java.lang.Exception e)
-        {
-            final java.lang.String message = e.getMessage();
-            this.setMultiLineTextViewText(null == message ? e.getClass().getName() : message);
-        }
     }
 
     private void setButtonText(final java.lang.String text)
@@ -153,34 +128,84 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
 
     public void onButtonClick(final android.view.View view)
     {
+        switch (this.buttonClickCount)
         {
-            switch (this.buttonClickCount)
-            {
-                case 0: this.listAll(this.internalDir); break;
-                case 1: this.listXml(this.internalDir); break;
+            case 0: this.listAll(this.internalDir); break;
+            case 1: this.listXml(this.internalDir); break;
 
-                case 2: this.listAll(this.externalPrivateDir); break;
-                case 3: this.listXml(this.externalPrivateDir); break;
+            case 2: this.listAll(this.externalPrivateDir); break;
+            case 3: this.listXml(this.externalPrivateDir); break;
 
-                case 4: this.listAll(this.externalPublicDir); break;
-                case 5: this.listXml(this.externalPublicDir); break;
+            case 4: this.listAll(this.externalPublicDir); break;
+            case 5: this.listXml(this.externalPublicDir); break;
 
-                case 6:
-                    @java.lang.SuppressWarnings({"ClassExplicitlyExtendsObject"})
-                    class Runnable extends java.lang.Object implements java.lang.Runnable
+            case 6: case 7:
+                class Thread extends java.lang.Thread
+                {
+                    // region Fields
+                    private final java.lang.String host, file;
+
+                    private org.wheatgenetics.javalib.Utils.Response response = null;
+                    private java.lang.String                         message  = null;
+                    // endregion
+
+                    private Thread(final java.lang.String host, final java.lang.String file)
+                    { super(); this.host = host; this.file = file; }
+
+                    @java.lang.Override public void run()
                     {
-                        @java.lang.Override public void run()
-                        { org.wheatgenetics.javalibraryuser.MainActivity.this.get(); }
+                        try
+                        {
+                            this.response = org.wheatgenetics.javalib.Utils.get(           // throws
+                                new java.net.URL(                                          // throws
+                                    /* protocol => */ "http", this.host, this.file));
+                        }
+                        catch (final java.lang.Exception e)
+                        {
+                            final java.lang.String message = e.getMessage();
+                            this.message = null == message ? e.getClass().getName() : message;
+                        }
                     }
-                    final java.lang.Thread thread = new java.lang.Thread(new Runnable(), "get()");
-                    thread.start(); break;
-            }
+                }
+
+                final Thread thread;
+                {
+                    final java.lang.String host, file;
+                    switch (this.buttonClickCount)
+                    {
+                        case 6 : host = "www.example.org"          ; file = "index.html"; break;
+                        case 7 : host = "www.youtypeitwepostit.com"; file = "api/"      ; break;
+                        default: host = null                       ; file = null        ; break;
+                    }
+                    thread = new Thread(host, file);
+                }
+
+                thread.start();
+                try { thread.join(); } catch (final java.lang.InterruptedException e)
+                {
+                    final java.lang.String message = e.getMessage();
+                    this.setMultiLineTextViewText(null == message ?
+                        e.getClass().getName() : message);
+                    break;
+                }
+
+                if (null != thread.message)
+                    this.setMultiLineTextViewText(thread.message);
+                else
+                    if (null == thread.response)
+                        this.setMultiLineTextViewText("response is null");
+                    else
+                        if ("text/html".equals(thread.response.contentType()))
+                            this.startActivity(this.intent(thread.response.content()));
+                        else
+                            this.setMultiLineTextViewText(thread.response.content());
+                break;
         }
 
         switch (this.buttonClickCount)
         {
-            case 0: case 1: case 2: case 3: case 4: case 5: this.buttonClickCount++  ; break;
-            default:                                        this.buttonClickCount = 0; break;
+            case 0: case 1: case 2: case 3: case 4: case 5: case 6: this.buttonClickCount++; break;
+            default:                                              this.buttonClickCount = 0; break;
         }
 
         switch (this.buttonClickCount)
@@ -194,7 +219,8 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
             case 4: this.setButtonText("externalPublicDir.list()"     ); break;
             case 5: this.setButtonText("externalPublicDir.list(regex)"); break;
 
-            case 6: this.setButtonText("http://www.example.org/"); break;
+            case 6: this.setButtonText("http://www.example.org/"              ); break;
+            case 7: this.setButtonText("http://www.youtypeitwepostit.com/api/"); break;
         }
     }
 }
