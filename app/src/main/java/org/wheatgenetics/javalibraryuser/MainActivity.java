@@ -146,67 +146,44 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
             case 5: this.listXml(this.externalPublicDir); break;
 
             case 6: case 7:
-                class Thread extends java.lang.Thread
+                final org.wheatgenetics.javalib.Utils.Response response;
                 {
-                    // region Fields
-                    private final java.lang.String host, file;
-
-                    private org.wheatgenetics.javalib.Utils.Response response = null;
-                    private java.lang.String                         message  = null;
-                    // endregion
-
-                    private Thread(final java.lang.String host, final java.lang.String file)
-                    { super(); this.host = host; this.file = file; }
-
-                    @java.lang.Override public void run()
+                    java.net.URL url;
                     {
+                        final java.lang.String protocol = "http";
                         try
                         {
-                            this.response = org.wheatgenetics.javalib.Utils.get(           // throws
-                                new java.net.URL(                                          // throws
-                                    /* protocol => */ "http", this.host, this.file));
+                            switch (this.buttonClickCount)
+                            {
+                                case 6:
+                                    url = new java.net.URL( // throws java.net.MalformedURLException
+                                        /* protocol => */ protocol         ,
+                                        /* host     => */ "www.example.org",
+                                        /* file     => */ "index.html"     );
+                                    break;
+
+                                case 7:
+                                    url = new java.net.URL( // throws java.net.MalformedURLException
+                                        /* protocol => */ protocol                   ,
+                                        /* host     => */ "www.youtypeitwepostit.com",
+                                        /* file     => */ "api/"                     );
+                                    break;
+
+                                default: url = null; break;
+                            }
                         }
-                        catch (final java.lang.Exception e)
-                        {
-                            final java.lang.String message = e.getMessage();
-                            this.message = null == message ? e.getClass().getName() : message;
-                        }
+                        catch (final java.net.MalformedURLException e) { url = null; }
                     }
+                    response = org.wheatgenetics.javalib.Utils.threadedGet(url);
                 }
-
-                final Thread thread;
-                {
-                    final java.lang.String host, file;
-                    switch (this.buttonClickCount)
-                    {
-                        case 6 : host = "www.example.org"          ; file = "index.html"; break;
-                        case 7 : host = "www.youtypeitwepostit.com"; file = "api/"      ; break;
-                        default: host = null                       ; file = null        ; break;
-                    }
-                    thread = new Thread(host, file);
-                }
-
-                thread.start();
-                try { thread.join(); } catch (final java.lang.InterruptedException e)
-                {
-                    final java.lang.String message = e.getMessage();
-                    this.setMultiLineTextViewText(null == message ?
-                        e.getClass().getName() : message);
-                    break;
-                }
-
-                if (null != thread.message)
-                    this.setMultiLineTextViewText(thread.message);
+                if (null == response)
+                    this.setMultiLineTextViewText("response is null");
                 else
-                    if (null == thread.response)
-                        this.setMultiLineTextViewText("response is null");
+                    if ("text/html".equals(response.contentType()))
+                        this.startActivity(this.intent(
+                            response.content(), response.contentEncoding()));
                     else
-                        if ("text/html".equals(thread.response.contentType()))
-                            this.startActivity(this.intent(
-                                thread.response.content        (),
-                                thread.response.contentEncoding()));
-                        else
-                            this.setMultiLineTextViewText(thread.response.content());
+                        this.setMultiLineTextViewText(response.content());
                 break;
         }
 
