@@ -14,6 +14,7 @@ package org.wheatgenetics.javalibraryuser;
  * android.widget.TextView
  *
  * org.wheatgenetics.javalib.Dir
+ * org.wheatgenetics.javalib.PermissionDir
  * org.wheatgenetics.javalib.Utils
  * org.wheatgenetics.javalib.Utils.Response
  *
@@ -22,12 +23,15 @@ package org.wheatgenetics.javalibraryuser;
  */
 public class MainActivity extends android.support.v7.app.AppCompatActivity
 {
+    private static final java.lang.String BLANK_HIDDEN_FILE = ".javalibraryuser";
+
+    // region Types
     private static class Dir extends org.wheatgenetics.javalib.Dir
     {
         private Dir(final java.io.File path, final android.app.Activity activity,
         @android.support.annotation.IdRes final int id)
         {
-            super(path, ".javalibraryuser", -1);
+            super(path, org.wheatgenetics.javalibraryuser.MainActivity.BLANK_HIDDEN_FILE);
 
             assert null != activity;
             final android.widget.TextView textView = activity.findViewById(id);
@@ -35,13 +39,23 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
         }
     }
 
+    private static class PermissionDir extends org.wheatgenetics.javalib.PermissionDir
+    {
+        private PermissionDir(final java.io.File path)
+        { super(path, org.wheatgenetics.javalibraryuser.MainActivity.BLANK_HIDDEN_FILE); }
+    }
+    // endregion
+
     // region Fields
     private org.wheatgenetics.javalibraryuser.MainActivity.Dir
         internalDir = null, externalPrivateDir = null, externalPublicDir = null;
+    private org.wheatgenetics.javalibraryuser.MainActivity.PermissionDir
+        internalPermissionDir = null, externalPrivatePermissionDir = null,
+        externalPublicPermissionDir = null;
 
     private android.widget.Button   button            = null;
     private android.widget.TextView multiLineTextView = null;
-    @android.support.annotation.IntRange(from = 0, to = 7) private int buttonClickCount = 0;
+    @android.support.annotation.IntRange(from = 0, to = 13) private int buttonClickCount = 0;
 
     private android.content.Intent intentInstance = null;
     // endregion
@@ -54,10 +68,10 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
     {
         final java.lang.String text;
         if (null == lines)
-            text = null;
+            text = "null";
         else
             if (lines.length < 1)
-                text = null;
+                text = "null";
             else
             {
                 final java.lang.StringBuilder stringBuilder;
@@ -77,10 +91,20 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
     }
 
     private void listAll(final org.wheatgenetics.javalib.Dir dir)
-    { if (null != dir) this.setMultiLineTextViewText(dir.list()); }
+    {
+        if (null != dir)
+            try { this.setMultiLineTextViewText(dir.list()); }
+            catch (final java.security.AccessControlException e)
+            { this.setMultiLineTextViewText(e.getMessage()); }
+    }
 
     private void listXml(final org.wheatgenetics.javalib.Dir dir)
-    { if (null != dir) this.setMultiLineTextViewText(dir.list(".+\\.xml")); }
+    {
+        if (null != dir)
+            try { this.setMultiLineTextViewText(dir.list(".+\\.xml")); }
+            catch (final java.security.AccessControlException e)
+            { this.setMultiLineTextViewText(e.getMessage()); }
+    }
 
     private android.content.Intent intent(
     final java.lang.String content, final java.lang.String encoding)
@@ -127,6 +151,15 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
             android.os.Environment.getExternalStorageDirectory(), this,
             org.wheatgenetics.javalibraryuser.R.id.externalPublicDirTextView);
 
+        this.internalPermissionDir =
+            new org.wheatgenetics.javalibraryuser.MainActivity.PermissionDir(this.getFilesDir());
+        this.externalPrivatePermissionDir =
+            new org.wheatgenetics.javalibraryuser.MainActivity.PermissionDir(
+                this.getExternalFilesDir(null));
+        this.externalPublicPermissionDir =
+            new org.wheatgenetics.javalibraryuser.MainActivity.PermissionDir(
+                android.os.Environment.getExternalStorageDirectory());
+
         this.button = this.findViewById(org.wheatgenetics.javalibraryuser.R.id.button);
         this.multiLineTextView = this.findViewById(
             org.wheatgenetics.javalibraryuser.R.id.multiLineTextView);
@@ -139,13 +172,22 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
             case 0: this.listAll(this.internalDir); break;
             case 1: this.listXml(this.internalDir); break;
 
-            case 2: this.listAll(this.externalPrivateDir); break;
-            case 3: this.listXml(this.externalPrivateDir); break;
+            case 2: this.listAll(this.internalPermissionDir); break;
+            case 3: this.listXml(this.internalPermissionDir); break;
 
-            case 4: this.listAll(this.externalPublicDir); break;
-            case 5: this.listXml(this.externalPublicDir); break;
+            case 4: this.listAll(this.externalPrivateDir); break;
+            case 5: this.listXml(this.externalPrivateDir); break;
 
-            case 6: case 7:
+            case 6: this.listAll(this.externalPrivatePermissionDir); break;
+            case 7: this.listXml(this.externalPrivatePermissionDir); break;
+
+            case 8: this.listAll(this.externalPublicDir); break;
+            case 9: this.listXml(this.externalPublicDir); break;
+
+            case 10: this.listAll(this.externalPublicPermissionDir); break;
+            case 11: this.listXml(this.externalPublicPermissionDir); break;
+
+            case 12: case 13:
                 final org.wheatgenetics.javalib.Utils.Response response;
                 {
                     java.net.URL url;
@@ -155,14 +197,14 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
                         {
                             switch (this.buttonClickCount)
                             {
-                                case 6:
+                                case 12:
                                     url = new java.net.URL( // throws java.net.MalformedURLException
                                         /* protocol => */ protocol         ,
                                         /* host     => */ "www.example.org",
                                         /* file     => */ "index.html"     );
                                     break;
 
-                                case 7:
+                                case 13:
                                     url = new java.net.URL( // throws java.net.MalformedURLException
                                         /* protocol => */ protocol                   ,
                                         /* host     => */ "www.youtypeitwepostit.com",
@@ -189,8 +231,10 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
 
         switch (this.buttonClickCount)
         {
-            case 0: case 1: case 2: case 3: case 4: case 5: case 6: this.buttonClickCount++; break;
-            default:                                              this.buttonClickCount = 0; break;
+            case  0: case  1: case  2: case 3: case 4: case 5: case 6: case 7: case 8: case 9:
+            case 10: case 11: case 12: this.buttonClickCount++; break;
+
+            default: this.buttonClickCount = 0; break;
         }
 
         switch (this.buttonClickCount)
@@ -198,14 +242,23 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
             case 0: this.setButtonText("internalDir.list()"     ); break;
             case 1: this.setButtonText("internalDir.list(regex)"); break;
 
-            case 2: this.setButtonText("externalPrivateDir.list()"     ); break;
-            case 3: this.setButtonText("externalPrivateDir.list(regex)"); break;
+            case 2: this.setButtonText("internalPermissionDir.list()"     ); break;
+            case 3: this.setButtonText("internalPermissionDir.list(regex)"); break;
 
-            case 4: this.setButtonText("externalPublicDir.list()"     ); break;
-            case 5: this.setButtonText("externalPublicDir.list(regex)"); break;
+            case 4: this.setButtonText("externalPrivateDir.list()"     ); break;
+            case 5: this.setButtonText("externalPrivateDir.list(regex)"); break;
 
-            case 6: this.setButtonText("http://www.example.org/"              ); break;
-            case 7: this.setButtonText("http://www.youtypeitwepostit.com/api/"); break;
+            case 6: this.setButtonText("externalPrivatePermissionDir.list()"     ); break;
+            case 7: this.setButtonText("externalPrivatePermissionDir.list(regex)"); break;
+
+            case 8: this.setButtonText("externalPublicDir.list()"     ); break;
+            case 9: this.setButtonText("externalPublicDir.list(regex)"); break;
+
+            case 10: this.setButtonText("externalPublicPermissionDir.list()"     ); break;
+            case 11: this.setButtonText("externalPublicPermissionDir.list(regex)"); break;
+
+            case 12: this.setButtonText("http://www.example.org/"              ); break;
+            case 13: this.setButtonText("http://www.youtypeitwepostit.com/api/"); break;
         }
     }
 }
