@@ -14,6 +14,7 @@ package org.wheatgenetics.javalibraryuser;
  * android.widget.TextView
  *
  * org.wheatgenetics.javalib.Dir
+ * org.wheatgenetics.javalib.Dir.PermissionException
  * org.wheatgenetics.javalib.PermissionDir
  * org.wheatgenetics.javalib.Utils
  * org.wheatgenetics.javalib.Utils.Response
@@ -94,7 +95,7 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
     {
         if (null != dir)
             try { this.setMultiLineTextViewText(dir.list()); }
-            catch (final java.security.AccessControlException e)
+            catch (final org.wheatgenetics.javalib.Dir.PermissionException e)
             { this.setMultiLineTextViewText(e.getMessage()); }
     }
 
@@ -102,7 +103,7 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
     {
         if (null != dir)
             try { this.setMultiLineTextViewText(dir.list(".+\\.xml")); }
-            catch (final java.security.AccessControlException e)
+            catch (final org.wheatgenetics.javalib.Dir.PermissionException e)
             { this.setMultiLineTextViewText(e.getMessage()); }
     }
 
