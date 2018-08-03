@@ -166,7 +166,7 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
             org.wheatgenetics.javalibraryuser.R.id.multiLineTextView);
     }
 
-    public void onButtonClick(final android.view.View view)
+    public void onButtonClick(@java.lang.SuppressWarnings({"unused"}) final android.view.View view)
     {
         switch (this.buttonClickCount)
         {
