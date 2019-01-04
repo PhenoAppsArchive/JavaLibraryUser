@@ -18,7 +18,9 @@
 
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/internalDirTextView"
@@ -29,7 +31,9 @@
 
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/externalPrivateDirTextView"
@@ -40,7 +44,9 @@
 
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/externalPublicDirTextView"
@@ -51,7 +57,9 @@
 
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+
+        tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/button"
@@ -64,7 +72,9 @@
 
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/multiLineTextView"
@@ -75,6 +85,8 @@
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+
+        tools:ignore="HardcodedText" />
 
 </android.support.constraint.ConstraintLayout>
