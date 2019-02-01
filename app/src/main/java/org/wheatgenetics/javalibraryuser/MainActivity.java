@@ -149,7 +149,7 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
             this.getExternalFilesDir(null), this,
             org.wheatgenetics.javalibraryuser.R.id.externalPrivateDirTextView);
         this.externalPublicDir = new org.wheatgenetics.javalibraryuser.MainActivity.Dir(
-            android.os.Environment.getExternalStorageDirectory(), this,
+            android.os.Environment.getExternalStorageDirectory(),this,
             org.wheatgenetics.javalibraryuser.R.id.externalPublicDirTextView);
 
         this.internalPermissionDir =
@@ -166,7 +166,7 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
             org.wheatgenetics.javalibraryuser.R.id.multiLineTextView);
     }
 
-    public void onButtonClick(@java.lang.SuppressWarnings({"unused"}) final android.view.View view)
+    public void onButtonClick(final android.view.View view)
     {
         switch (this.buttonClickCount)
         {
@@ -200,16 +200,16 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
                             {
                                 case 12:
                                     url = new java.net.URL( // throws java.net.MalformedURLException
-                                        /* protocol => */ protocol         ,
-                                        /* host     => */ "www.example.org",
-                                        /* file     => */ "index.html"     );
+                                        /* protocol => */ protocol,
+                                        /* host     => */"www.example.org",
+                                        /* file     => */"index.html");
                                     break;
 
                                 case 13:
                                     url = new java.net.URL( // throws java.net.MalformedURLException
-                                        /* protocol => */ protocol                   ,
-                                        /* host     => */ "www.youtypeitwepostit.com",
-                                        /* file     => */ "api/"                     );
+                                        /* protocol => */ protocol,
+                                        /* host     => */"www.youtypeitwepostit.com",
+                                        /* file     => */"api/");
                                     break;
 
                                 default: url = null; break;
