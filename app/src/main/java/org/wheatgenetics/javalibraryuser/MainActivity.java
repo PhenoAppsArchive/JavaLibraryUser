@@ -65,7 +65,8 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
     private void setMultiLineTextViewText(final java.lang.String text)
     { assert null != this.multiLineTextView; this.multiLineTextView.setText(text); }
 
-    private void setMultiLineTextViewText(final java.lang.String lines[])
+    private void setMultiLineTextViewText(
+    @java.lang.SuppressWarnings({"CStyleArrayDeclaration"}) final java.lang.String lines[])
     {
         final java.lang.String text;
         if (null == lines)
