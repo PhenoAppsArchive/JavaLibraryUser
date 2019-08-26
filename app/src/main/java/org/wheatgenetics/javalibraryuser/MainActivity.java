@@ -218,7 +218,7 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
                         }
                         catch (final java.net.MalformedURLException e) { url = null; }
                     }
-                    response = org.wheatgenetics.javalib.Utils.threadedGet(url);
+                    response = org.wheatgenetics.javalib.Utils.threadedGet(url,500);
                 }
                 if (null == response)
                     this.setMultiLineTextViewText("response is null");
