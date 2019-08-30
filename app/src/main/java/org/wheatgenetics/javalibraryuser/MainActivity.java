@@ -8,6 +8,7 @@ package org.wheatgenetics.javalibraryuser;
  * android.os.Environment
  * android.support.annotation.IdRes
  * android.support.annotation.IntRange
+ * android.support.annotation.NonNull
  * android.support.v7.app.AppCompatActivity
  * android.view.View
  * android.widget.Button
@@ -24,19 +25,23 @@ package org.wheatgenetics.javalibraryuser;
  */
 public class MainActivity extends android.support.v7.app.AppCompatActivity
 {
-    private static final java.lang.String BLANK_HIDDEN_FILE = ".javalibraryuser";
+    // region Constants
+    private static final java.lang.String BLANK_HIDDEN_FILE = ".javalibrarybuilder",
+        BUTTON_STATE_KEY = "buttonState", MULTI_LINE_TEXT_VIEW_TEXT_KEY = "multiLineTextViewText";
+    private static final int MIN_BUTTON_STATE = 0, MAX_BUTTON_STATE = 13;
+    // endregion
 
     // region Types
     private static class Dir extends org.wheatgenetics.javalib.Dir
     {
-        private Dir(final java.io.File path, final android.app.Activity activity,
-        @android.support.annotation.IdRes final int id)
+        private Dir(final java.io.File path,
+        @android.support.annotation.NonNull final android.app.Activity activity,
+        @android.support.annotation.IdRes   final int                  id      )
         {
             super(path, org.wheatgenetics.javalibraryuser.MainActivity.BLANK_HIDDEN_FILE);
 
-            assert null != activity;
             final android.widget.TextView textView = activity.findViewById(id);
-            assert null != textView; textView.setText(this.getPathAsString());
+            if (null != textView) textView.setText(this.getPathAsString());
         }
     }
 
@@ -56,13 +61,17 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
 
     private android.widget.Button   button            = null;
     private android.widget.TextView multiLineTextView = null;
-    @android.support.annotation.IntRange(from = 0, to = 13) private int buttonClickCount = 0;
+
+    @android.support.annotation.IntRange(
+    from = org.wheatgenetics.javalibraryuser.MainActivity.MIN_BUTTON_STATE,
+    to   = org.wheatgenetics.javalibraryuser.MainActivity.MAX_BUTTON_STATE)
+    private int buttonState = org.wheatgenetics.javalibraryuser.MainActivity.MIN_BUTTON_STATE;
 
     private android.content.Intent intentInstance = null;
     // endregion
 
     // region Private Methods
-    private void setMultiLineTextViewText(final java.lang.String text)
+    private void setMultiLineTextViewText(final java.lang.CharSequence text)
     { assert null != this.multiLineTextView; this.multiLineTextView.setText(text); }
 
     private void setMultiLineTextViewText(
@@ -72,7 +81,7 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
         if (null == lines)
             text = "null";
         else
-            if (lines.length < 1)
+            if (lines.length <= 0)
                 text = "null";
             else
             {
@@ -124,30 +133,59 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
 
     private void setButtonText(final java.lang.String text)
     { assert null != this.button; this.button.setText(text); }
+
+    private void makeButtonReflectCurrentButtonState()
+    {
+        switch (this.buttonState)
+        {
+            case org.wheatgenetics.javalibraryuser.MainActivity.MIN_BUTTON_STATE:
+                this.setButtonText("internalDir.list()"); break;
+            case 1: this.setButtonText("internalDir.list(regex)"); break;
+
+            case 2: this.setButtonText("internalPermissionDir.list()"     ); break;
+            case 3: this.setButtonText("internalPermissionDir.list(regex)"); break;
+
+            case 4: this.setButtonText("externalPrivateDir.list()"     ); break;
+            case 5: this.setButtonText("externalPrivateDir.list(regex)"); break;
+
+            case 6: this.setButtonText("externalPrivatePermissionDir.list()"     ); break;
+            case 7: this.setButtonText("externalPrivatePermissionDir.list(regex)"); break;
+
+            case 8: this.setButtonText("externalPublicDir.list()"     ); break;
+            case 9: this.setButtonText("externalPublicDir.list(regex)"); break;
+
+            case 10: this.setButtonText("externalPublicPermissionDir.list()"     ); break;
+            case 11: this.setButtonText("externalPublicPermissionDir.list(regex)"); break;
+
+            case 12: this.setButtonText("http://www.example.org/"); break;
+            case org.wheatgenetics.javalibraryuser.MainActivity.MAX_BUTTON_STATE:
+                this.setButtonText("http://www.youtypeitwepostit.com/api/"); break;
+        }
+    }
     // endregion
 
+    // region Overridden Methods
     @java.lang.Override protected void onCreate(final android.os.Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         this.setContentView(org.wheatgenetics.javalibraryuser.R.layout.activity_main);
 
         {
-            final java.lang.String        text;
             final android.widget.TextView adjustTextView = this.findViewById(
                 org.wheatgenetics.javalibraryuser.R.id.adjustTextView);
+            if (null != adjustTextView)
             {
                 final java.lang.String unadjusted = "  2 leading spaces";
-                text = java.lang.String.format("adjust(\"%s\") is \"%s\"",
-                    unadjusted, org.wheatgenetics.javalib.Utils.adjust(unadjusted));
+                adjustTextView.setText(java.lang.String.format("adjust(\"%s\") is \"%s\"",
+                    unadjusted, org.wheatgenetics.javalib.Utils.adjust(unadjusted)));
             }
-            assert null != adjustTextView; adjustTextView.setText(text);
         }
 
         this.internalDir = new org.wheatgenetics.javalibraryuser.MainActivity.Dir(
-            this.getFilesDir(), this,
+            this.getFilesDir(),this,
             org.wheatgenetics.javalibraryuser.R.id.internalDirTextView);
         this.externalPrivateDir = new org.wheatgenetics.javalibraryuser.MainActivity.Dir(
-            this.getExternalFilesDir(null), this,
+            this.getExternalFilesDir(null),this,
             org.wheatgenetics.javalibraryuser.R.id.externalPrivateDirTextView);
         this.externalPublicDir = new org.wheatgenetics.javalibraryuser.MainActivity.Dir(
             android.os.Environment.getExternalStorageDirectory(),this,
@@ -165,13 +203,52 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
         this.button = this.findViewById(org.wheatgenetics.javalibraryuser.R.id.button);
         this.multiLineTextView = this.findViewById(
             org.wheatgenetics.javalibraryuser.R.id.multiLineTextView);
+
+        if (null != savedInstanceState)
+        {
+            if (savedInstanceState.containsKey(
+            org.wheatgenetics.javalibraryuser.MainActivity.BUTTON_STATE_KEY))
+            {
+                @android.support.annotation.IntRange(
+                from = org.wheatgenetics.javalibraryuser.MainActivity.MIN_BUTTON_STATE,
+                to   = org.wheatgenetics.javalibraryuser.MainActivity.MAX_BUTTON_STATE) final int
+                    oldButtonState = this.buttonState,
+                    newButtonState = savedInstanceState.getInt(
+                        org.wheatgenetics.javalibraryuser.MainActivity.BUTTON_STATE_KEY);
+                if (newButtonState != oldButtonState)
+                {
+                    this.buttonState = newButtonState;
+                    this.makeButtonReflectCurrentButtonState();
+                }
+            }
+
+            if (savedInstanceState.containsKey(
+            org.wheatgenetics.javalibraryuser.MainActivity.MULTI_LINE_TEXT_VIEW_TEXT_KEY))
+                this.setMultiLineTextViewText(savedInstanceState.getCharSequence(
+                    org.wheatgenetics.javalibraryuser.MainActivity.MULTI_LINE_TEXT_VIEW_TEXT_KEY));
+        }
     }
+
+    @java.lang.Override protected void onSaveInstanceState(final android.os.Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        if (null != outState)
+        {
+            outState.putInt(
+                org.wheatgenetics.javalibraryuser.MainActivity.BUTTON_STATE_KEY, this.buttonState);
+            if (null != this.multiLineTextView) outState.putCharSequence(
+                org.wheatgenetics.javalibraryuser.MainActivity.MULTI_LINE_TEXT_VIEW_TEXT_KEY,
+                this.multiLineTextView.getText()                                            );
+        }
+    }
+    // endregion
 
     public void onButtonClick(final android.view.View view)
     {
-        switch (this.buttonClickCount)
+        switch (this.buttonState)
         {
-            case 0: this.listAll(this.internalDir); break;
+            case org.wheatgenetics.javalibraryuser.MainActivity.MIN_BUTTON_STATE:
+                this.listAll(this.internalDir); break;
             case 1: this.listXml(this.internalDir); break;
 
             case 2: this.listAll(this.internalPermissionDir); break;
@@ -189,7 +266,7 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
             case 10: this.listAll(this.externalPublicPermissionDir); break;
             case 11: this.listXml(this.externalPublicPermissionDir); break;
 
-            case 12: case 13:
+            case 12: case org.wheatgenetics.javalibraryuser.MainActivity.MAX_BUTTON_STATE:
                 final org.wheatgenetics.javalib.Utils.Response response;
                 {
                     java.net.URL url;
@@ -197,7 +274,7 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
                         final java.lang.String protocol = "http";
                         try
                         {
-                            switch (this.buttonClickCount)
+                            switch (this.buttonState)
                             {
                                 case 12:
                                     url = new java.net.URL( // throws java.net.MalformedURLException
@@ -206,7 +283,8 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
                                         /* file     => */"index.html");
                                     break;
 
-                                case 13:
+                                case
+                                org.wheatgenetics.javalibraryuser.MainActivity.MAX_BUTTON_STATE:
                                     url = new java.net.URL( // throws java.net.MalformedURLException
                                         /* protocol => */ protocol,
                                         /* host     => */"www.youtypeitwepostit.com",
@@ -231,36 +309,15 @@ public class MainActivity extends android.support.v7.app.AppCompatActivity
                 break;
         }
 
-        switch (this.buttonClickCount)
+        switch (this.buttonState)
         {
-            case  0: case  1: case  2: case 3: case 4: case 5: case 6: case 7: case 8: case 9:
-            case 10: case 11: case 12: this.buttonClickCount++; break;
+            case org.wheatgenetics.javalibraryuser.MainActivity.MIN_BUTTON_STATE:
+            case 1: case  2: case  3: case  4: case 5: case 6: case 7: case 8:
+            case 9: case 10: case 11: case 12: this.buttonState++; break;
 
-            default: this.buttonClickCount = 0; break;
+            default: this.buttonState =
+                org.wheatgenetics.javalibraryuser.MainActivity.MIN_BUTTON_STATE; break;
         }
-
-        switch (this.buttonClickCount)
-        {
-            case 0: this.setButtonText("internalDir.list()"     ); break;
-            case 1: this.setButtonText("internalDir.list(regex)"); break;
-
-            case 2: this.setButtonText("internalPermissionDir.list()"     ); break;
-            case 3: this.setButtonText("internalPermissionDir.list(regex)"); break;
-
-            case 4: this.setButtonText("externalPrivateDir.list()"     ); break;
-            case 5: this.setButtonText("externalPrivateDir.list(regex)"); break;
-
-            case 6: this.setButtonText("externalPrivatePermissionDir.list()"     ); break;
-            case 7: this.setButtonText("externalPrivatePermissionDir.list(regex)"); break;
-
-            case 8: this.setButtonText("externalPublicDir.list()"     ); break;
-            case 9: this.setButtonText("externalPublicDir.list(regex)"); break;
-
-            case 10: this.setButtonText("externalPublicPermissionDir.list()"     ); break;
-            case 11: this.setButtonText("externalPublicPermissionDir.list(regex)"); break;
-
-            case 12: this.setButtonText("http://www.example.org/"              ); break;
-            case 13: this.setButtonText("http://www.youtypeitwepostit.com/api/"); break;
-        }
+        this.makeButtonReflectCurrentButtonState();
     }
 }
