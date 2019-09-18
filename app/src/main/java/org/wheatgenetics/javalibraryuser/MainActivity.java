@@ -23,10 +23,11 @@ package org.wheatgenetics.javalibraryuser;
  * org.wheatgenetics.javalibraryuser.R
  *  * org.wheatgenetics.javalibraryuser.WebViewActivity
  */
+@java.lang.SuppressWarnings({"unused"})
 public class MainActivity extends android.support.v7.app.AppCompatActivity
 {
     // region Constants
-    private static final java.lang.String BLANK_HIDDEN_FILE = ".javalibrarybuilder",
+    private static final java.lang.String BLANK_HIDDEN_FILE = ".javalibraryuser",
         BUTTON_STATE_KEY = "buttonState", MULTI_LINE_TEXT_VIEW_TEXT_KEY = "multiLineTextViewText";
     private static final int MIN_BUTTON_STATE = 0, MAX_BUTTON_STATE = 13;
     // endregion
