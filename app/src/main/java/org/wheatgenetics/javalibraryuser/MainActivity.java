@@ -21,7 +21,7 @@ package org.wheatgenetics.javalibraryuser;
  * org.wheatgenetics.javalib.Utils.Response
  *
  * org.wheatgenetics.javalibraryuser.R
- *  * org.wheatgenetics.javalibraryuser.WebViewActivity
+ * org.wheatgenetics.javalibraryuser.WebViewActivity
  */
 @java.lang.SuppressWarnings({"unused"})
 public class MainActivity extends android.support.v7.app.AppCompatActivity
