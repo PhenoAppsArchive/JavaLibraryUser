@@ -2,7 +2,7 @@
 
 Java Library User is a minimal Android Phone and Tablet app.  It is the scaffolding used to test a [Java Library](https://developer.android.com/studio/projects/android-library.html) called Java Library.
 
-Java Library provides utility classes, a change log class, comma-separated value classes, and master-detail items.
+Java Library provides 1) utility classes, 2) a change log class, 3) comma-separated value classes, 4) master-detail items, and 5) a BrAPI client SDK.
 
 ### Developer
 Peter J. Rosario - [peterrosario@ksu.edu](mailto:peterrosario@ksu.edu)
